@@ -16,7 +16,7 @@ Si no tiene una cuenta de Microsoft, hay un par de opciones para obtener una cue
 
 1. Abra un explorador y vaya al [centro de administración de Azure Active Directory](https://aad.portal.azure.com) e inicie sesión con una **cuenta personal** (también conocida como: cuenta Microsoft) o una **cuenta profesional o educativa**.
 
-1. Seleccione **Azure Active Directory** en el panel de navegación izquierdo y seleccione **Registros de aplicaciones (versión preliminar)** en **Administrar**.
+1. Seleccione **Azure Active Directory** en el panel de navegación de la izquierda y, después, seleccione **registros de aplicaciones** en **administrar**.
 
     ![Una captura de pantalla de los registros de la aplicación ](../../tutorial/images/aad-portal-app-registrations.png)
 
