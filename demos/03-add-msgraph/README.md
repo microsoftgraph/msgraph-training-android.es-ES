@@ -28,14 +28,14 @@ Si no tiene una cuenta de Microsoft, hay un par de opciones para obtener una cue
 
     ![Captura de pantalla de la página registrar una aplicación](../../tutorial/images/aad-register-an-app.png)
 
-1. Elija **Registrar**. En la página **tutorial de Xamarin Graph** , copie el valor del **identificador de la aplicación (cliente)** y guárdelo, lo necesitará en el paso siguiente.
+1. Seleccione **registrar**. En la página **tutorial de Xamarin Graph** , copie el valor del **identificador de la aplicación (cliente)** y guárdelo, lo necesitará en el paso siguiente.
 
     ![Captura de pantalla del identificador de la aplicación del nuevo registro de la aplicación](../../tutorial/images/aad-application-id.png)
 
-1. Seleccione el vínculo **Agregar un URI de** redireccionamiento. En la página **URI** de redireccionamiento, busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comience con `msal` y cópielo y, después, elija **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
+1. Seleccione el vínculo **Agregar un URI de** redireccionamiento. En la página **URI** de redireccionamiento, busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comienza con `msal` y cópielo y, a continuación, seleccione **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
 
     ![Captura de pantalla de la página URI de redireccionamiento](../../tutorial/images/aad-redirect-uris.png)
 
 ## <a name="run-the-sample"></a>Ejecutar el ejemplo
 
-En Android Studio, elija **Ejecutar "aplicación"** en el menú **Ejecutar** .
+En Android Studio, seleccione **Ejecutar "aplicación"** en el menú **Ejecutar** .

@@ -24,7 +24,7 @@ Si solo quiere el ejemplo completado que se genera siguiendo este laboratorio, p
 
 ## <a name="watch-the-module"></a>Ver el módulo
 
-Este módulo se ha registrado y está disponible en el canal de YouTube de desarrollo de Office: comPilar [aplicaciones nativas de Android con el SDK de Java de Microsoft Graph](https://youtu.be/Yk0FMwXanck)
+Este módulo se ha registrado y está disponible en el canal de YouTube de desarrollo de Office: compilar [aplicaciones nativas de Android con el SDK de Java de Microsoft Graph](https://youtu.be/BLmOmv4FSsQ)
 
 ## <a name="contributors"></a>Colaboradores
 
@@ -38,10 +38,12 @@ Este módulo se ha registrado y está disponible en el canal de YouTube de desar
 
 | Versión | Fecha               | Comentarios                                                                   |
 | ------- | ------------------ | -------------------------------------------------------------------------- |
-| 1.6     | 20 de febrero de 2019  | Se actualizó a formato docs.microsoft.com      |
+| 1.8     | 18 de junio de 2019      | Se actualizó el archivo Léame en grabación de screencast actualizada                           |
+| 1.7     | 30 de marzo de 2019     | Actualización del contenido de FY2019Q4                                                   |
+| 1.6     | 20 de febrero de 2019  | Se actualizó a formato docs.microsoft.com                                       |
 | 1.5     | 12 de febrero de 2019  | Se actualizaron varias dependencias aplicadas trimestralmente                    |
-| 1.4     | 8 de noviembre de 2018   | Graph Java SDK actualizado a GA v1 & aplicado actualización trimestral                |
-| 1.3     | 12 de septiembre de 2018 | Se ha reemplazado el SDK de Android de Graph con Graph Java & se ha aplicado la actualización trimestral |
+| 1.4     | 8 de noviembre de 2018   | Graph Java SDK actualizado a GA v1 & se ha aplicado la actualización trimestral                |
+| 1.3     | 12 de septiembre de 2018 | Gráfico que ha reemplazado SDK de Android con Graph Java & se ha aplicado la actualización trimestral |
 | 1.2     | 28 de junio de 2018      | Se ha agregado una screencast.                                                          |
 | 1.1     | 22 de junio de 2018      | Se rescribió para usar las instrucciones más recientes.                                          |
 | 1.0     | Aproximadamente 24 de noviembre de 2017 | Agregue las sesiones de producto relacionadas con Microsoft Graph.                             |
