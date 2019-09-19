@@ -32,9 +32,15 @@ Si no tiene una cuenta de Microsoft, hay un par de opciones para obtener una cue
 
     ![Captura de pantalla del identificador de la aplicación del nuevo registro de la aplicación](../../tutorial/images/aad-application-id.png)
 
-1. Seleccione el vínculo **Agregar un URI de** redireccionamiento. En la página **URI** de redireccionamiento, busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comienza con `msal` y cópielo y, a continuación, seleccione **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
+1. Seleccione el vínculo **Agregar un URI de redireccionamiento** . En la página **URI de redireccionamiento** , busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comienza con `msal` y cópielo y, a continuación, seleccione **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
 
     ![Captura de pantalla de la página URI de redireccionamiento](../../tutorial/images/aad-redirect-uris.png)
+
+## <a name="configure-the-sample"></a>Configuración del ejemplo
+
+1. Cambie el nombre `oauth_strings.xml.example` del archivo `oauth_strings.xml` y muévalo al `GraphTutorial/app/src/main/res/values` directorio.
+1. Edite `oauth_strings.xml` el archivo y realice los cambios siguientes.
+    1. Reemplace `YOUR_APP_ID_HERE` por el **identificador de aplicación** que obtuvo desde el portal de Azure.
 
 ## <a name="run-the-sample"></a>Ejecutar el ejemplo
 
