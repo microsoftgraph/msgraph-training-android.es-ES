@@ -12,14 +12,10 @@ En este ejercicio, creará una nueva aplicación nativa de Azure AD con el centr
 
     - Establezca **Nombre** como `Android Graph Tutorial`.
     - Establezca **Tipos de cuenta admitidos** en **Cuentas en cualquier directorio de organización y cuentas personales de Microsoft**.
-    - Deje **URI de redireccionamiento** vacía.
+    - En **URI de redireccionamiento**, establezca la lista desplegable en **cliente público/nativo (móvil & escritorio)** y `msauth://YOUR_PACKAGE_NAME/callback`establezca el `YOUR_PACKAGE_NAME` valor en, reemplazando por el nombre del paquete del proyecto.
 
     ![Captura de pantalla de la página registrar una aplicación](./images/aad-register-an-app.png)
 
 1. Seleccione **registrar**. En la página **tutorial de Android Graph** , copie el valor del **identificador de la aplicación (cliente)** y guárdelo, lo necesitará en el paso siguiente.
 
     ![Captura de pantalla del identificador de la aplicación del nuevo registro de la aplicación](./images/aad-application-id.png)
-
-1. Seleccione el vínculo **Agregar un URI de** redireccionamiento. En la página **URI** de redireccionamiento, busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comienza con `msal` y cópielo y, a continuación, seleccione **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
-
-    ![Captura de pantalla de la página URI de redireccionamiento](./images/aad-redirect-uris.png)

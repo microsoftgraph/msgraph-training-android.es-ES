@@ -10,7 +10,7 @@ Este tutorial le enseña a crear una aplicación de Android que use la API de Mi
 Antes de iniciar este tutorial, debe tener instalado [Android Studio](https://developer.android.com/studio/) en el equipo de desarrollo.
 
 > [!NOTE]
-> Este tutorial se ha redactado con Android Studio versión 3.3.1 con 1.8.0 JRE y el SDK de Android 9,0. Los pasos de esta guía pueden funcionar con otras versiones, pero no se han probado.
+> Este tutorial se ha escrito con la versión 3.5.1 de Android Studio y el SDK de Android 10,0. Los pasos de esta guía pueden funcionar con otras versiones, pero no se han probado.
 
 ## <a name="watch-the-tutorial"></a>Vea el tutorial
 

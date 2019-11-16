@@ -4,7 +4,7 @@
 
 Para ejecutar el proyecto completado en esta carpeta, necesita lo siguiente:
 
-- [Android Studio](https://developer.android.com/studio/) instalado en el equipo de desarrollo. (**Nota:** este tutorial se ha redactado con Android Studio versión 3.3.1 con 1.8.0 JRE y el SDK de Android 9,0. Los pasos de esta guía pueden funcionar con otras versiones, pero no se han probado.
+- [Android Studio](https://developer.android.com/studio/) instalado en el equipo de desarrollo. (**Nota:** este tutorial se ha escrito con la versión 3.5.1 de Android Studio y el SDK de Android 10,0. Los pasos de esta guía pueden funcionar con otras versiones, pero no se han probado.
 - Una cuenta de Microsoft personal con un buzón de correo en Outlook.com o una cuenta profesional o educativa de Microsoft.
 
 Si no tiene una cuenta de Microsoft, hay un par de opciones para obtener una cuenta gratuita:
@@ -24,22 +24,18 @@ Si no tiene una cuenta de Microsoft, hay un par de opciones para obtener una cue
 
     - Establezca **Nombre** como `Android Graph Tutorial`.
     - Establezca **Tipos de cuenta admitidos** en **Cuentas en cualquier directorio de organización y cuentas personales de Microsoft**.
-    - Deje **URI de redireccionamiento** vacía.
+    - En **URI de redireccionamiento**, establezca la lista desplegable en **cliente público/nativo (móvil & escritorio)** y `msauth://YOUR_PACKAGE_NAME/callback`establezca el `YOUR_PACKAGE_NAME` valor en, reemplazando por el nombre del paquete del proyecto.
 
     ![Captura de pantalla de la página registrar una aplicación](../../tutorial/images/aad-register-an-app.png)
 
-1. Seleccione **registrar**. En la página **tutorial de Xamarin Graph** , copie el valor del **identificador de la aplicación (cliente)** y guárdelo, lo necesitará en el paso siguiente.
+1. Seleccione **registrar**. En la página **tutorial de Android Graph** , copie el valor del **identificador de la aplicación (cliente)** y guárdelo, lo necesitará en el paso siguiente.
 
     ![Captura de pantalla del identificador de la aplicación del nuevo registro de la aplicación](../../tutorial/images/aad-application-id.png)
 
-1. Seleccione el vínculo **Agregar un URI de redireccionamiento** . En la página **URI de redireccionamiento** , busque la sección **URI de redireccionamiento sugeridos para clientes públicos (móvil, escritorio)** . Seleccione el URI que comienza con `msal` y cópielo y, a continuación, seleccione **Guardar**. Guarde el URI de redireccionamiento copiado y lo necesitará en el paso siguiente.
-
-    ![Captura de pantalla de la página URI de redireccionamiento](../../tutorial/images/aad-redirect-uris.png)
-
 ## <a name="configure-the-sample"></a>Configuración del ejemplo
 
-1. Cambie el nombre `oauth_strings.xml.example` del archivo `oauth_strings.xml` y muévalo al `GraphTutorial/app/src/main/res/values` directorio.
-1. Edite `oauth_strings.xml` el archivo y realice los cambios siguientes.
+1. Cambie el nombre `msal_config.json.example` del archivo `msal_config.json` y muévalo al `GraphTutorial/app/src/main/res/raw` directorio.
+1. Edite `msal_config.json` el archivo y realice los cambios siguientes.
     1. Reemplace `YOUR_APP_ID_HERE` por el **identificador de aplicación** que obtuvo desde el portal de Azure.
 
 ## <a name="run-the-sample"></a>Ejecutar el ejemplo

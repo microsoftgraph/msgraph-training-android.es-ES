@@ -8,18 +8,18 @@ Para empezar, cree un nuevo proyecto de Android Studio.
 
     ![Captura de pantalla del cuadro de diálogo Crear nuevo proyecto en Android Studio](./images/choose-project.png)
 
-1. En el cuadro de diálogo **configurar el proyecto** , **** establezca el `Graph Tutorial`nombre en, asegúrese de que el campo `Java` **idioma** esté establecido en y asegúrese de que el **nivel mínimo de API** esté establecido en. `API 27: Android 8.1 (Oreo)` Modifique el **nombre del paquete** y la **Ubicación de guardado** según sea necesario. Seleccione **Finalizar**.
+1. En el cuadro de diálogo **configurar el proyecto** , **** establezca el `Graph Tutorial`nombre en, asegúrese de que el campo `Java` **idioma** esté establecido en y asegúrese de que el **nivel mínimo de API** esté establecido en. `API 29: Android 10.0 (Q)` Modifique el **nombre del paquete** y la **Ubicación de guardado** según sea necesario. Seleccione **Finalizar**.
 
     ![Captura de pantalla del cuadro de diálogo Configurar el proyecto](./images/configure-project.png)
 
 > [!IMPORTANT]
-> Asegúrese de que escribe exactamente el mismo nombre para el proyecto que se especifica en estas instrucciones de la práctica. El nombre del proyecto se convierte en parte del espacio de nombres en el código. El código incluido en estas instrucciones depende del espacio de nombres que coincida con el nombre de proyecto especificado en estas instrucciones. Si usa un nombre de proyecto diferente, el código no se compilará a menos que ajuste todos los espacios de nombres para que se correspondan con el nombre del proyecto que ha especificado al crear el proyecto.
+> El código y las instrucciones de este tutorial usan el nombre de paquete **com. example. graphtutorial**. Si usa un nombre de paquete diferente al crear el proyecto, asegúrese de usar el nombre del paquete en cualquier lugar en el que vea este valor.
 
 ## <a name="install-dependencies"></a>Instalar dependencias
 
 Antes de continuar, instale algunas dependencias adicionales que usará más adelante.
 
-- `com.android.support:design`para que los diseños de cajón de navegación estén disponibles para la aplicación.
+- `com.google.android.material:material`para que la [vista de navegación](https://material.io/develop/android/components/navigation-view/) esté disponible para la aplicación.
 - [Biblioteca de autenticación de Microsoft (MSAL) para Android](https://github.com/AzureAD/microsoft-authentication-library-for-android) para administrar la autenticación y la administración de tokens de Azure ad.
 - [SDK de Microsoft Graph para Java](https://github.com/microsoftgraph/msgraph-sdk-java) para realizar llamadas a Microsoft Graph.
 
@@ -28,15 +28,12 @@ Antes de continuar, instale algunas dependencias adicionales que usará más ade
 1. Agregue las siguientes líneas dentro del `dependencies` valor.
 
     ```Gradle
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.microsoft.graph:microsoft-graph:1.4.0'
-    implementation 'com.microsoft.identity.client:msal:0.2.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.microsoft.identity.client:msal:1.0.0'
+    implementation 'com.microsoft.graph:microsoft-graph:1.6.0'
     ```
 
-    > [!NOTE]
-    > Si usa una versión de SDK diferente, asegúrese de cambiar el `28.0.0` para que coincide con la versión de la `com.android.support:appcompat-v7` dependencia que ya está presente en **Build. Gradle**.
-
-1. Agregue un `packagingOptions` dentro del `android` valor en el archivo **Build. Gradle (Module: app)** .
+1. Agregue un `packagingOptions` valor dentro del `android` valor en el archivo **Build. Gradle (Module: app)** .
 
     ```Gradle
     packagingOptions {
@@ -48,7 +45,7 @@ Antes de continuar, instale algunas dependencias adicionales que usará más ade
 
 ## <a name="design-the-app"></a>Diseñar la aplicación
 
-La aplicación usará un [cajón de navegación](https://developer.android.com/training/implementing-navigation/nav-drawer) para navegar entre distintas vistas. En este paso, se actualizará la actividad para usar un diseño de cajón de navegación y agregar fragmentos para las vistas.
+La aplicación usará un cajón de navegación para navegar entre distintas vistas. En este paso, se actualizará la actividad para usar un diseño de cajón de navegación y agregar fragmentos para las vistas.
 
 ### <a name="create-a-navigation-drawer"></a>Crear un cajón de navegación
 
@@ -58,7 +55,7 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
 
 1. Haga clic con el botón derecho en la carpeta **App/res/drawable** , seleccione **nuevo**y, a continuación, **activo vector**.
 
-1. Haga clic en el botón de icono situado junto a **imágenes**prediseñadas.
+1. Haga clic en el botón de icono situado junto a **imágenes prediseñadas**.
 
 1. En la ventana **seleccionar icono** , escriba `home` en la barra de búsqueda, seleccione el icono **Inicio** y haga clic en **Aceptar**.
 
@@ -179,7 +176,7 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
-    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/drawer_layout"
@@ -201,7 +198,7 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
                 android:layout_centerInParent="true"
                 android:visibility="gone"/>
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -216,7 +213,7 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
                 android:layout_below="@+id/toolbar" />
         </RelativeLayout>
 
-        <android.support.design.widget.NavigationView
+        <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -224,7 +221,7 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/drawer_menu" />
 
-    </android.support.v4.widget.DrawerLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
     ```
 
 1. Abra **App/res/Values/Strings. XML** y agregue los siguientes elementos dentro `resources` del elemento.
@@ -239,20 +236,20 @@ En esta sección se crean iconos para el menú de navegación de la aplicación,
     ```java
     package com.example.graphtutorial;
 
-    import android.support.annotation.NonNull;
-    import android.support.design.widget.NavigationView;
-    import android.support.v4.view.GravityCompat;
-    import android.support.v4.widget.DrawerLayout;
-    import android.support.v7.app.ActionBarDrawerToggle;
-    import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
-    import android.support.v7.widget.Toolbar;
     import android.view.Menu;
     import android.view.MenuItem;
     import android.view.View;
     import android.widget.FrameLayout;
     import android.widget.ProgressBar;
     import android.widget.TextView;
+    import androidx.annotation.NonNull;
+    import androidx.appcompat.app.ActionBarDrawerToggle;
+    import androidx.appcompat.app.AppCompatActivity;
+    import androidx.appcompat.widget.Toolbar;
+    import androidx.core.view.GravityCompat;
+    import androidx.drawerlayout.widget.DrawerLayout;
+    import com.google.android.material.navigation.NavigationView;
 
     public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
         private DrawerLayout mDrawer;
@@ -361,7 +358,7 @@ En esta sección, creará fragmentos para las vistas de inicio y calendario.
 
 1. Asigne un nombre `fragment_home` al archivo y cambie el **elemento raíz** a `RelativeLayout`y, a continuación, seleccione **Aceptar**.
 
-1. Abra el archivo **fragment_home. XML** y reemplace su contenido por lo siguiente.
+1. Abra el archivo **fragment_home. XML** y reemplace el contenido por lo siguiente.
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
@@ -399,7 +396,7 @@ En esta sección, creará fragmentos para las vistas de inicio y calendario.
 
 1. Asigne un nombre `fragment_calendar` al archivo y cambie el **elemento raíz** a `RelativeLayout`y, a continuación, seleccione **Aceptar**.
 
-1. Abra el archivo **fragment_calendar. XML** y reemplace su contenido por lo siguiente.
+1. Abra el archivo **fragment_calendar. XML** y reemplace el contenido por lo siguiente.
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
@@ -419,7 +416,7 @@ En esta sección, creará fragmentos para las vistas de inicio y calendario.
 
 1. Haga clic con el botón secundario en la carpeta **app/java/com. example. graphtutorial** y seleccione **nuevo**y, a continuación, **clase Java**.
 
-1. Asigne un nombre `HomeFragment` a la clase y establezca `android.support.v4.app.Fragment`la **superclase** en y, a continuación, seleccione **Aceptar**.
+1. Asigne un nombre `HomeFragment` a la clase y establezca `androidx.fragment.app.Fragment`la **superclase** en y, a continuación, seleccione **Aceptar**.
 
 1. Abra el archivo **HomeFragment** y reemplace el contenido por lo siguiente.
 
@@ -480,15 +477,28 @@ En esta sección, creará fragmentos para las vistas de inicio y calendario.
 
 1. Haga clic con el botón secundario en la carpeta **app/java/com. example. graphtutorial** y seleccione **nuevo**y, a continuación, **clase Java**.
 
-1. Asigne un nombre `CalendarFragment` a la clase y establezca `android.support.v4.app.Fragment`la **superclase** en y, a continuación, seleccione **Aceptar**.
+1. Asigne un nombre `CalendarFragment` a la clase y establezca `androidx.fragment.app.Fragment`la **superclase** en y, a continuación, seleccione **Aceptar**.
 
-1. Abra el archivo **CalendarFragment** y agregue la siguiente función a la `CalendarFragment` clase.
+1. Abra el archivo **CalendarFragment** y reemplace el contenido por lo siguiente.
 
     ```java
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
+    package com.example.graphtutorial;
+
+    import android.os.Bundle;
+    import android.view.LayoutInflater;
+    import android.view.View;
+    import android.view.ViewGroup;
+    import androidx.annotation.NonNull;
+    import androidx.annotation.Nullable;
+    import androidx.fragment.app.Fragment;
+
+    public class CalendarFragment extends Fragment {
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_calendar, container, false);
+        }
     }
     ```
 

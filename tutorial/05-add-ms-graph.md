@@ -59,7 +59,7 @@ En esta sección, ampliará la `GraphHelper` clase para agregar una función par
     import com.microsoft.graph.models.extensions.Event;
     import com.microsoft.graph.requests.extensions.IEventCollectionPage;
     import com.microsoft.identity.client.AuthenticationCallback;
-    import com.microsoft.identity.client.AuthenticationResult;
+    import com.microsoft.identity.client.IAuthenticationResult;
     import com.microsoft.identity.client.exception.MsalException;
     import java.util.List;
     ```
@@ -114,7 +114,7 @@ En esta sección, ampliará la `GraphHelper` clase para agregar una función par
     }
     ```
 
-1. Reemplace la `onCreate` función de la `GraphHelper` clase para obtener los eventos del usuario de Microsoft Graph.
+1. Reemplace la `onCreate` función de la `CalendarFragment` clase para obtener los eventos del usuario de Microsoft Graph.
 
     ```java
     @Override
@@ -128,7 +128,7 @@ En esta sección, ampliará la `GraphHelper` clase para agregar una función par
         AuthenticationHelper.getInstance()
                 .acquireTokenSilently(new AuthenticationCallback() {
                     @Override
-                    public void onSuccess(AuthenticationResult authenticationResult) {
+                    public void onSuccess(IAuthenticationResult authenticationResult) {
                         final GraphHelper graphHelper = GraphHelper.getInstance();
 
                         // Get the user's events
@@ -175,7 +175,7 @@ Ahora puede reemplazar el volcado de JSON con algo para mostrar los resultados d
 
 1. Asigne un nombre `event_list_item`al archivo, cambie el **elemento raíz** a `RelativeLayout`y seleccione **Aceptar**.
 
-1. Abra el archivo **event_list_item. XML** y reemplace su contenido por lo siguiente.
+1. Abra el archivo **event_list_item. XML** y reemplace el contenido por lo siguiente.
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
@@ -249,16 +249,14 @@ Ahora puede reemplazar el volcado de JSON con algo para mostrar los resultados d
     package com.example.graphtutorial;
 
     import android.content.Context;
-    import android.support.annotation.NonNull;
     import android.view.LayoutInflater;
     import android.view.View;
     import android.view.ViewGroup;
     import android.widget.ArrayAdapter;
     import android.widget.TextView;
-
+    import androidx.annotation.NonNull;
     import com.microsoft.graph.models.extensions.DateTimeTimeZone;
     import com.microsoft.graph.models.extensions.Event;
-
     import java.time.LocalDateTime;
     import java.time.ZoneId;
     import java.time.ZonedDateTime;
