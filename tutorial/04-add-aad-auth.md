@@ -258,7 +258,7 @@ En esta sección, actualizará el manifiesto para permitir que MSAL use un explo
     ```
 
     > [!NOTE]
-    > Observe que el `signIn` método comprueba primero si hay una cuenta de usuario que ya está en la memoria caché de MSAL. Si es así, intenta actualizar sus tokens silenciosamente, evitando tener que preguntar al usuario cada vez que inician la aplicación.
+    > Observe que el `signIn` método realiza un inicio de sesión silencioso (Via `doSilentSignIn`). La devolución de llamada para este método realizará un inicio de sesión interactivo si se produce un error en el modo silencioso. Esto evita tener que preguntar al usuario cada vez que inicia la aplicación.
 
 1. Guarde los cambios y ejecute la aplicación.
 
@@ -396,7 +396,7 @@ En esta sección, creará una clase auxiliar que contendrá todas las llamadas a
 
     ```java
     @Override
-    public void onSuccess(AuthenticationResult authenticationResult) {
+    public void onSuccess(IAuthenticationResult authenticationResult) {
         // Log the token for debug purposes
         String accessToken = authenticationResult.getAccessToken();
         Log.d("AUTH", String.format("Access token: %s", accessToken));
