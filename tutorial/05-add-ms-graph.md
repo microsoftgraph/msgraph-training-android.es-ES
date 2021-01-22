@@ -1,102 +1,85 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-En este ejercicio, incorporará Microsoft Graph a la aplicación. Para esta aplicación, usará el [SDK de Microsoft Graph para Java](https://github.com/microsoftgraph/msgraph-sdk-java) para realizar llamadas a Microsoft Graph.
+En este ejercicio incorporará Microsoft Graph en la aplicación. Para esta aplicación, usará el SDK de [Microsoft Graph para Java](https://github.com/microsoftgraph/msgraph-sdk-java) realizar llamadas a Microsoft Graph.
 
 ## <a name="get-calendar-events-from-outlook"></a>Obtener eventos de calendario de Outlook
 
-En esta sección, ampliará la `GraphHelper` clase para agregar una función para obtener los eventos del usuario y actualizar `CalendarFragment` para usar estas funciones nuevas.
+En esta sección, ampliará la clase para agregar una función para obtener los eventos del usuario de la semana actual y actualizar para usar `GraphHelper` `CalendarFragment` estas nuevas funciones.
 
-1. Abra el archivo **GraphHelper** y agregue las siguientes `import` instrucciones en la parte superior del archivo.
+1. Abra **GraphHelper** y agregue las `import` siguientes instrucciones en la parte superior del archivo.
 
     ```java
     import com.microsoft.graph.options.Option;
+    import com.microsoft.graph.options.HeaderOption;
     import com.microsoft.graph.options.QueryOption;
     import com.microsoft.graph.requests.extensions.IEventCollectionPage;
+    import com.microsoft.graph.requests.extensions.IEventCollectionRequestBuilder;
+    import java.time.ZonedDateTime;
+    import java.time.format.DateTimeFormatter;
     import java.util.LinkedList;
     import java.util.List;
     ```
 
 1. Agregue las siguientes funciones a la `GraphHelper` clase.
 
-    ```java
-    public void getEvents(String accessToken, ICallback<IEventCollectionPage> callback) {
-        mAccessToken = accessToken;
-
-        // Use query options to sort by created time
-        final List<Option> options = new LinkedList<Option>();
-        options.add(new QueryOption("orderby", "createdDateTime DESC"));
-
-
-        // GET /me/events
-        mClient.me().events().buildRequest(options)
-                .select("subject,organizer,start,end")
-                .get(callback);
-
-    }
-
-    // Debug function to get the JSON representation of a Graph
-    // object
-    public String serializeObject(Object object) {
-        return mClient.getSerializer().serializeObject(object);
-    }
-    ```
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/GraphHelper.java" id="GetEventsSnippet":::
 
     > [!NOTE]
-    > Tenga en cuenta lo que `getEvents` hace el código.
+    > Ten en cuenta lo que hace `getCalendarView` el código.
     >
-    > - La dirección URL a la que se `/v1.0/me/events`llamará es.
-    > - La `select` función limita los campos devueltos para cada evento a solo aquellos que la vista usará realmente.
-    > - El `QueryOption` nombre `orderby` se usa para ordenar los resultados por la fecha y la hora de creación, con el elemento más reciente en primer lugar.
+    > - La dirección URL a la que se llamará es `/v1.0/me/calendarview` .
+    >   - Los `startDateTime` parámetros de consulta y de consulta definen el inicio y el final de la vista de `endDateTime` calendario.
+    >   - el encabezado hace que Microsoft Graph devuelva las horas de inicio y finalización de cada evento en la `Prefer: outlook.timezone` zona horaria del usuario.
+    >   - La `select` función limita los campos devueltos para cada evento a solo aquellos que la vista usará realmente.
+    >   - La `orderby` función ordena los resultados por hora de inicio.
+    >   - La `top` función solicita 25 resultados por página.
+    > - Se define una devolución de llamada ( ) para comprobar si hay más resultados disponibles y para solicitar `pagingCallback` páginas adicionales si es necesario.
 
-1. Agregue las siguientes `import` instrucciones en la parte superior del archivo **CalendarFragment** .
+1. Haga clic con el botón secundario en la carpeta **app/java/com.example.graphtutorial** y seleccione Nuevo **y,** a continuación, **Java clase**. Asigne un nombre a `GraphToIana` la clase y seleccione **Aceptar**.
+
+1. Abra el nuevo archivo y reemplace su contenido por lo siguiente.
+
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/GraphToIana.java" id="GraphToIanaSnippet":::
+
+1. Agregue las siguientes `import` instrucciones a la parte superior del archivo **CalendarFragment.**
 
     ```java
     import android.util.Log;
     import android.widget.ListView;
-    import android.widget.ProgressBar;
+    import com.google.android.material.snackbar.BaseTransientBottomBar;
+    import com.google.android.material.snackbar.Snackbar;
     import com.microsoft.graph.concurrency.ICallback;
     import com.microsoft.graph.core.ClientException;
     import com.microsoft.graph.models.extensions.Event;
-    import com.microsoft.graph.requests.extensions.IEventCollectionPage;
     import com.microsoft.identity.client.AuthenticationCallback;
     import com.microsoft.identity.client.IAuthenticationResult;
     import com.microsoft.identity.client.exception.MsalException;
+    import java.time.DayOfWeek;
+    import java.time.ZoneId;
+    import java.time.ZonedDateTime;
+    import java.time.temporal.ChronoUnit;
+    import java.time.temporal.TemporalAdjusters;
     import java.util.List;
     ```
 
-1. Agregue los siguientes miembros a la `CalendarFragment` clase.
+1. Agregue el siguiente miembro a la `CalendarFragment` clase.
 
     ```java
     private List<Event> mEventList = null;
-    private ProgressBar mProgress = null;
     ```
 
-1. Agregue las siguientes funciones a la `CalendarFragment` clase para ocultar y mostrar la barra de progreso, y para proporcionar una devolución de `getEvents` llamada para `GraphHelper`la función en.
+1. Agregue las siguientes funciones a la `CalendarFragment` clase para ocultar y mostrar la barra de progreso.
+
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/CalendarFragment.java" id="ProgressBarSnippet":::
+
+1. Agregue la siguiente función para proporcionar una devolución de llamada para `getCalendarView` la función en `GraphHelper` .
 
     ```java
-    private void showProgressBar() {
-        getActivity().runOnUiThread(new Runnable() {
+    private ICallback<List<Event>> getCalendarViewCallback() {
+        return new ICallback<List<Event>>() {
             @Override
-            public void run() {
-                mProgress.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void hideProgressBar() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mProgress.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private ICallback<IEventCollectionPage> getEventsCallback() {
-        return new ICallback<IEventCollectionPage>() {
-            @Override
-            public void success(IEventCollectionPage iEventCollectionPage) {
-                mEventList = iEventCollectionPage.getCurrentPage();
+            public void success(List<Event> eventList) {
+                mEventList = eventList;
 
                 // Temporary for debugging
                 String jsonEvents = GraphHelper.getInstance().serializeObject(mEventList);
@@ -107,253 +90,58 @@ En esta sección, ampliará la `GraphHelper` clase para agregar una función par
 
             @Override
             public void failure(ClientException ex) {
-                Log.e("GRAPH", "Error getting events", ex);
                 hideProgressBar();
+                Log.e("GRAPH", "Error getting events", ex);
+                Snackbar.make(getView(),
+                    ex.getMessage(),
+                    BaseTransientBottomBar.LENGTH_LONG).show();
             }
         };
     }
     ```
 
-1. Reemplace la `onCreate` función de la `CalendarFragment` clase para obtener los eventos del usuario de Microsoft Graph.
+1. Reemplace la función `onCreateView` existente en la clase por lo `CalendarFragment` siguiente.
 
-    ```java
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/CalendarFragment.java" id="OnCreateViewSnippet":::
 
-        mProgress = getActivity().findViewById(R.id.progressbar);
-        showProgressBar();
+    Observe lo que hace este código. En primer lugar, `acquireTokenSilently` llama para obtener el token de acceso. Llamar a este método cada vez que se necesita un token de acceso es un procedimiento recomendado porque aprovecha las capacidades de almacenamiento en caché y actualización de tokens de MSAL. Internamente, MSAL busca un token almacenado en caché y, a continuación, comprueba si ha expirado. Si el token está presente y no ha expirado, solo devuelve el token almacenado en caché. Si ha expirado, intenta actualizar el token antes de devolverlo.
 
-        // Get a current access token
-        AuthenticationHelper.getInstance()
-                .acquireTokenSilently(new AuthenticationCallback() {
-                    @Override
-                    public void onSuccess(IAuthenticationResult authenticationResult) {
-                        final GraphHelper graphHelper = GraphHelper.getInstance();
+    Una vez recuperado el token, el código llama al `getCalendarView` método para obtener los eventos del usuario.
 
-                        // Get the user's events
-                        graphHelper.getEvents(authenticationResult.getAccessToken(),
-                                getEventsCallback());
-                    }
-
-                    @Override
-                    public void onError(MsalException exception) {
-                        Log.e("AUTH", "Could not get token silently", exception);
-                        hideProgressBar();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        hideProgressBar();
-                    }
-                });
-    }
-    ```
-
-Observe lo que hace el código. En primer lugar, `acquireTokenSilently` llama a para obtener el token de acceso. Llamar a este método cada vez que se necesita un token de acceso es un procedimiento recomendado porque aprovecha las capacidades de almacenamiento en caché y actualización de los tokens de MSAL. Internamente, MSAL comprueba un token almacenado en caché y, a continuación, comprueba si ha expirado. Si el token está presente y no ha expirado, simplemente devuelve el token almacenado en caché. Si ha expirado, intenta actualizar el token antes de devolverlo.
-
-Una vez que se recupera el token, el código llama `getEvents` al método para obtener los eventos del usuario.
-
-Ahora puede ejecutar la aplicación, iniciar sesión y puntear en el elemento de navegación **calendario** del menú. Debe ver un volcado JSON de los eventos en el registro de depuración en Android Studio.
+1. Ejecuta la aplicación, inicia sesión y pulsa el elemento **de** navegación Calendario en el menú. Debería ver un volcado JSON de los eventos en el registro de depuración en Android Studio.
 
 ## <a name="display-the-results"></a>Mostrar los resultados
 
-Ahora puede reemplazar el volcado de JSON con algo para mostrar los resultados de forma fácil de uso. En `ListView` esta sección, agregará un al fragmento de calendario, creará un diseño para cada elemento en el `ListView`y creará un adaptador de lista personalizado para `ListView` el que asigna los campos de `Event` cada uno de `TextView` ellos al correspondiente en la vista.
+Ahora puede reemplazar el volcado json por algo para mostrar los resultados de forma fácil de usar. En esta sección, agregará una al fragmento de calendario, creará un diseño para cada elemento de la lista y creará un adaptador de lista personalizado para el que asigna los campos de cada uno a la adecuada en la `ListView` `ListView` `ListView` `Event` `TextView` vista.
 
-1. Reemplace `TextView` en **App/res/layout/fragment_calendar. XML** por un `ListView`.
+1. Reemplace el `TextView` archivo **en app/res/layout/fragment_calendar.xml** por un `ListView` archivo .
 
-    ```xml
-    <ListView
-        android:id="@+id/eventlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/colorPrimary"
-        android:dividerHeight="1dp" />
-    ```
+    :::code language="xml" source="../demo/GraphTutorial/app/src/main/res/layout/fragment_calendar.xml" highlight="6-11":::
 
-1. Haga clic con el botón derecho en la carpeta **App/res/layout** y seleccione **nuevo**y, a continuación, **archivo de recursos de distribución**.
+1. Haga clic con el botón secundario en **la carpeta app/res/layout** y seleccione **Nuevo** y, a continuación, archivo de recursos **de diseño.**
 
-1. Asigne un nombre `event_list_item`al archivo, cambie el **elemento raíz** a `RelativeLayout`y seleccione **Aceptar**.
+1. Asigne un nombre `event_list_item` al archivo, cambie el **elemento Raíz** a y seleccione `RelativeLayout` **Aceptar**.
 
-1. Abra el archivo **event_list_item. XML** y reemplace el contenido por lo siguiente.
+1. Abra el **event_list_item.xml** archivo y reemplace su contenido por lo siguiente.
 
-    ```xml
-    <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
+    :::code language="xml" source="../demo/GraphTutorial/app/src/main/res/layout/event_list_item.xml":::
 
-        <TextView
-            android:id="@+id/eventsubject"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Subject"
-            android:textSize="20sp" />
+1. Haga clic con el botón secundario en la carpeta **app/java/com.example.graphtutorial** y seleccione Nuevo **y,** a continuación, **Java clase**.
 
-        <TextView
-            android:id="@+id/eventorganizer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/eventsubject"
-            android:text="Adele Vance"
-            android:textSize="15sp" />
+1. Asigne un nombre a `EventListAdapter` la clase y seleccione **Aceptar**.
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/eventorganizer"
-            android:orientation="horizontal">
+1. Abra el **archivo EventListAdapter** y reemplace su contenido por lo siguiente.
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="2sp"
-                android:text="Start:"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/EventListAdapter.java" id="EventListAdapterSnippet":::
 
-            <TextView
-                android:id="@+id/eventstart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1:30 PM 2/19/2019"
-                android:textSize="15sp" />
+1. Abra la **clase CalendarFragment** y agregue la siguiente función a la clase.
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="5sp"
-                android:paddingEnd="2sp"
-                android:text="End:"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/CalendarFragment.java" id="AddEventsToListSnippet":::
 
-            <TextView
-                android:id="@+id/eventend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1:30 PM 2/19/2019"
-                android:textSize="15sp" />
-        </LinearLayout>
-    </RelativeLayout>
-    ```
+1. Reemplace el código de depuración temporal de la `success` invalidación por `addEventsToList();` .
 
-1. Haga clic con el botón secundario en la carpeta **app/java/com. example. graphtutorial** y seleccione **nuevo**y, a continuación, **clase Java**.
+    :::code language="java" source="../demo/GraphTutorial/app/src/main/java/com/example/graphtutorial/CalendarFragment.java" id="SuccessSnippet" highlight="5":::
 
-1. Asigne un nombre `EventListAdapter` a la clase y seleccione **Aceptar**.
-
-1. Abra el archivo **EventListAdapter** y reemplace el contenido por lo siguiente.
-
-    ```java
-    package com.example.graphtutorial;
-
-    import android.content.Context;
-    import android.view.LayoutInflater;
-    import android.view.View;
-    import android.view.ViewGroup;
-    import android.widget.ArrayAdapter;
-    import android.widget.TextView;
-    import androidx.annotation.NonNull;
-    import com.microsoft.graph.models.extensions.DateTimeTimeZone;
-    import com.microsoft.graph.models.extensions.Event;
-    import java.time.LocalDateTime;
-    import java.time.ZoneId;
-    import java.time.ZonedDateTime;
-    import java.time.format.DateTimeFormatter;
-    import java.time.format.FormatStyle;
-    import java.util.List;
-    import java.util.TimeZone;
-
-    public class EventListAdapter extends ArrayAdapter<Event> {
-        private Context mContext;
-        private int mResource;
-        private ZoneId mLocalTimeZoneId;
-
-        // Used for the ViewHolder pattern
-        // https://developer.android.com/training/improving-layouts/smooth-scrolling
-        static class ViewHolder {
-            TextView subject;
-            TextView organizer;
-            TextView start;
-            TextView end;
-        }
-
-        public EventListAdapter(Context context, int resource, List<Event> events) {
-            super(context, resource, events);
-            mContext = context;
-            mResource = resource;
-            mLocalTimeZoneId = TimeZone.getDefault().toZoneId();
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Event event = getItem(position);
-
-            ViewHolder holder;
-
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                convertView = inflater.inflate(mResource, parent, false);
-
-                holder = new ViewHolder();
-                holder.subject = convertView.findViewById(R.id.eventsubject);
-                holder.organizer = convertView.findViewById(R.id.eventorganizer);
-                holder.start = convertView.findViewById(R.id.eventstart);
-                holder.end = convertView.findViewById(R.id.eventend);
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.subject.setText(event.subject);
-            holder.organizer.setText(event.organizer.emailAddress.name);
-            holder.start.setText(getLocalDateTimeString(event.start));
-            holder.end.setText(getLocalDateTimeString(event.end));
-
-            return convertView;
-        }
-
-        // Convert Graph's DateTimeTimeZone format to
-        // a LocalDateTime, then return a formatted string
-        private String getLocalDateTimeString(DateTimeTimeZone dateTime) {
-            ZonedDateTime localDateTime = LocalDateTime.parse(dateTime.dateTime)
-                    .atZone(ZoneId.of(dateTime.timeZone))
-                    .withZoneSameInstant(mLocalTimeZoneId);
-
-            return String.format("%s %s",
-                    localDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)),
-                    localDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)));
-        }
-    }
-    ```
-
-1. Abra la clase **CalendarFragment** y agregue la siguiente función a la clase.
-
-    ```java
-    private void addEventsToList() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ListView eventListView = getView().findViewById(R.id.eventlist);
-
-                EventListAdapter listAdapter = new EventListAdapter(getActivity(),
-                        R.layout.event_list_item, mEventList);
-
-                eventListView.setAdapter(listAdapter);
-            }
-        });
-    }
-    ```
-
-1. Agregue la siguiente línea de código en la `success` invalidación después `mEventList = iEventCollectionPage.getCurrentPage();` de la línea.
-
-    ```java
-    addEventsToList();
-    ```
-
-1. Ejecute la aplicación, inicie sesión y pulse el elemento de navegación **calendario** . Debe ver la lista de eventos.
+1. Ejecuta la aplicación, inicia sesión y pulsa en el **elemento de** navegación Calendario. Debería ver la lista de eventos.
 
     ![Captura de pantalla de la tabla de eventos](./images/calendar-list.png)
